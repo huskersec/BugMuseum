@@ -1,0 +1,16 @@
+0000000140001480 <vuln>:
+   140001480:	push   rbx
+   140001481:	sub    rsp,0x40
+   140001485:	mov    rbx,QWORD PTR [rip+0x3004]        # 140004490 <.refptr.__stack_chk_guard>
+   14000148c:	mov    rax,QWORD PTR [rbx]
+   14000148f:	mov    QWORD PTR [rsp+0x38],rax
+   140001494:	xor    eax,eax
+   140001496:	mov    rdx,rcx
+   140001499:	lea    rcx,[rsp+0x20]
+   14000149e:	call   1400027b0 <strcpy>
+   1400014a3:	mov    rax,QWORD PTR [rsp+0x38]
+   1400014a8:	sub    rax,QWORD PTR [rbx]
+   1400014ab:	jne    1400014b3 <vuln+0x33>
+   1400014ad:	add    rsp,0x40
+   1400014b1:	pop    rbx
+   1400014b2:	ret
