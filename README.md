@@ -8,7 +8,7 @@ The idea: take a textbook vulnerability, compile it at different optimization le
 
 This museum is **Windows-only**. Every exhibit targets **x64 PE** built with **MSVC (`cl.exe`)**, disassembled with **`dumpbin`**, and decompiled with an **angr / pypcode** pipeline. Mitigation flags (`/GS`, `/guard:cf`) and the idioms they emit (`__security_cookie`, `__security_check_cookie`) are the real Windows shapes you'll meet in the wild — not their Linux/GCC equivalents.
 
-> The very first exhibit (`stack-overflow-1`) was originally built with mingw-GCC and is preserved as a cross-toolchain reference, because recognizing the *same* bug under MSVC vs GCC idioms is itself a skill. Everything else is MSVC.
+> The very first exhibit (`stack-overflow`) was originally built with mingw-GCC and is preserved as a cross-toolchain reference, because recognizing the *same* bug under MSVC vs GCC idioms is itself a skill. Everything else is MSVC.
 
 Run [`build.ps1`](build.ps1) to regenerate authoritative asm/decompilation for any exhibit from a real `cl.exe` toolchain.
 
@@ -36,7 +36,7 @@ Each *variant* (an Axis B point) carries the full Axis A set, so every exhibit i
 
 | Exhibit | Bug class | Description |
 | --- | --- | --- |
-| [stack-overflow-1](stack-overflow-1/) | CWE-121 — Stack-based Buffer Overflow | A fixed `buf[16]` overrun, built out along Axis B: 6 idioms from plain `strcpy` to subtle "looks-safe" disguises |
+| [stack-overflow](stack-overflow/) | CWE-121 — Stack-based Buffer Overflow | A fixed `buf[16]` overrun, built out along Axis B: 6 idioms from plain `strcpy` to subtle "looks-safe" disguises |
 
 **Planned exhibits** (each with its own Axis A/B grid): heap overflow · integer-overflow → undersized allocation · signedness bug · use-after-free · double free · out-of-bounds read (info leak) · uninitialized memory use. These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
 

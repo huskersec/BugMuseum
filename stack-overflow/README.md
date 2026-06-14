@@ -1,4 +1,4 @@
-# Exhibit: stack-overflow-1 — CWE-121 Stack Buffer Overflow
+# Exhibit: stack-overflow — CWE-121 Stack Buffer Overflow
 
 One bug class, studied as a grid. Every variant is the **same property** — an unbounded (or wrongly-bounded) write into a fixed stack buffer that can reach the saved return address — wearing a different disguise, and each is built three ways.
 
