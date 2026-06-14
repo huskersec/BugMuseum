@@ -1,0 +1,16 @@
+; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
+  0000000140001005: sub         rsp,38h
+  0000000140001009: mov         r8,qword ptr [rsp+40h]        ; r8 = input   (vararg #1)
+  000000014000100E: lea         rdx,["%s"]                    ; rdx = format string ("%s")
+  0000000140001015: lea         rcx,[rsp+20h]                 ; rcx = &buf
+  000000014000101A: call        sprintf                       ; no field width on %s
+  000000014000101F: add         rsp,38h
+  0000000140001023: ret
+
+; Fingerprint: a printf-family call whose dest (arg0) is a stack local and whose format is
+; the literal "%s" — the conversion has no width cap, so this is an unbounded copy in disguise.
+; Tell vs variant-01: format-string register (rdx) is set up; the attacker data rides in r8.

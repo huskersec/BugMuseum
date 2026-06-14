@@ -1,0 +1,15 @@
+; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln  (C symbol, no name mangling)
+
+vuln:
+  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home param 0 (input) into shadow slot
+  0000000140001005: sub         rsp,38h                      ; frame: 20h shadow + 10h buf + 8 align
+  0000000140001009: mov         rdx,qword ptr [rsp+40h]       ; rdx = input  (re-read from home slot)
+  000000014000100E: lea         rcx,[rsp+20h]                 ; rcx = &buf   <-- address of stack local
+  0000000140001013: call        strcpy                        ; no length argument
+  0000000140001018: add         rsp,38h
+  000000014000101C: ret
+
+; Fingerprint (MSVC /Od): rsp-relative frame (NO push rbp, unlike GCC -O0);
+; lea of a stack local into arg0 (rcx) + a copy primitive with no size = unbounded write.
+; buf occupies [rsp+20h..rsp+2Fh]; return address sits at [rsp+38h] — 8 bytes of slack above buf.

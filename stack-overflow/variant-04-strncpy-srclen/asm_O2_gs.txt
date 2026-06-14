@@ -1,0 +1,22 @@
+; cl /O2 /GS /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: sub         rsp,38h
+  0000000140001004: mov         rax,qword ptr [__security_cookie]
+  000000014000100B: xor         rax,rsp
+  000000014000100E: mov         qword ptr [rsp+28h],rax
+  0000000140001013: mov         rsi,rcx                       ; save input
+  0000000140001016: call        strlen
+  000000014000101B: mov         r8,rax                        ; r8 = strlen(input)
+  000000014000101E: mov         rdx,rsi                       ; rdx = input
+  0000000140001021: lea         rcx,[rsp+20h]                 ; rcx = &buf
+  0000000140001025: call        strncpy
+  000000014000102A: mov         rcx,qword ptr [rsp+28h]
+  000000014000102F: xor         rcx,rsp
+  0000000140001032: call        __security_check_cookie
+  0000000140001037: add         rsp,38h
+  000000014000103B: ret
+
+; Same /GS wrapper. The "n" in strncpy did not stop the compiler from deciding this frame
+; needs a cookie — another hint that the bounded look is cosmetic.

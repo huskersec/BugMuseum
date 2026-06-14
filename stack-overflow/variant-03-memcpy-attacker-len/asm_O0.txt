@@ -1,0 +1,17 @@
+; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
+  0000000140001005: mov         dword ptr [rsp+10h],edx       ; home len
+  0000000140001009: sub         rsp,38h
+  000000014000100D: mov         r8d,dword ptr [rsp+48h]        ; r8d = len   <-- SIZE comes from a parameter
+  0000000140001012: mov         rdx,qword ptr [rsp+40h]        ; rdx = input
+  0000000140001017: lea         rcx,[rsp+20h]                  ; rcx = &buf
+  000000014000101C: call        memcpy
+  0000000140001021: add         rsp,38h
+  0000000140001025: ret
+
+; Fingerprint: memcpy whose size operand (r8/r8d) traces back to an incoming value, NOT to an
+; immediate or sizeof(dest). A *safe* memcpy here would load r8 with 10h (=16) or a clamped min.
+; The presence of a size arg is a decoy — follow the data flow of the size, not just its existence.

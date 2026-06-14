@@ -1,0 +1,18 @@
+; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
+  0000000140001005: sub         rsp,38h
+  0000000140001009: mov         rcx,qword ptr [rsp+40h]        ; rcx = input
+  000000014000100E: call        strlen                         ; measure the SOURCE
+  0000000140001013: mov         r8,rax                         ; r8 = strlen(input)  <-- size from src
+  0000000140001016: mov         rdx,qword ptr [rsp+40h]        ; rdx = input
+  000000014000101B: lea         rcx,[rsp+20h]                  ; rcx = &buf
+  0000000140001020: call        strncpy                        ; "bounded" by the wrong length
+  0000000140001025: add         rsp,38h
+  0000000140001029: ret
+
+; Fingerprint: a sized copy whose count operand is the return of strlen() on the SAME pointer
+; that is also the copy source. sizeof(dest)=16 never appears. The 'n' primitive is a decoy;
+; strncpy(d, s, strlen(s)) == strcpy(d, s) for overflow purposes.

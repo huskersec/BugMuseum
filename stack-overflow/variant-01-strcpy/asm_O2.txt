@@ -1,0 +1,15 @@
+; cl /O2 /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: sub         rsp,38h
+  0000000140001004: mov         rdx,rcx                       ; rdx = input  (no home/reload — kept in reg)
+  0000000140001007: lea         rcx,[rsp+20h]                 ; rcx = &buf
+  000000014000100B: call        strcpy                        ; still unbounded
+  0000000140001010: add         rsp,38h
+  0000000140001014: ret
+
+; Lesson: same bug, frame bookkeeping gone. The named "buf" is erased — you reason in rsp offsets only.
+; Note: because buf is never read, an aggressive build may eliminate the copy entirely as dead code.
+; Real exhibits make the buffer observable (e.g. pass it onward) so the vuln survives /O2; this minimal
+; case is kept parallel to the GCC reference, which also retained the call.

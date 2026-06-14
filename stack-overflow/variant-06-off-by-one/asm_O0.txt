@@ -1,0 +1,24 @@
+; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln   (buf based at [rsp+0], i at [rsp+10h], input homed at [rsp+20h])
+
+vuln:
+  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
+  0000000140001005: sub         rsp,18h
+  0000000140001009: mov         dword ptr [rsp+10h],0         ; i = 0
+  0000000140001011: jmp         000000014000102B             ; -> test
+; body:
+  0000000140001013: mov         eax,dword ptr [rsp+10h]       ; eax = i
+  0000000140001017: mov         rcx,qword ptr [rsp+20h]       ; rcx = input
+  000000014000101C: movzx       edx,byte ptr [rcx+rax]        ; dl  = input[i]
+  0000000140001020: mov         eax,dword ptr [rsp+10h]       ; eax = i
+  0000000140001024: mov         byte ptr [rsp+rax],dl         ; buf[i] = dl
+  0000000140001027: inc         dword ptr [rsp+10h]           ; i++
+; test:
+  000000014000102B: cmp         dword ptr [rsp+10h],10h       ; compare i with 16
+  0000000140001030: jbe         0000000140001013             ; <-- BUG: jbe (<=); correct code uses jb (<)
+  0000000140001032: add         rsp,18h
+  0000000140001036: ret
+
+; Fingerprint: a byte-copy loop guarded by `cmp i,10h` followed by JBE/JLE rather than JB/JL.
+; The whole bug is one mnemonic — the boundary predicate. i runs 0..16 inclusive = 17 stores into
+; a 16-byte buffer. (Exactly which neighbor buf[16] clobbers depends on the frame layout.)

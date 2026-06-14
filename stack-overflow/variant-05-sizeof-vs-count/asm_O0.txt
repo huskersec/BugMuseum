@@ -1,0 +1,17 @@
+; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
+  0000000140001005: sub         rsp,48h                       ; frame: 20h shadow + 20h buf(32B) + 8 align
+  0000000140001009: mov         rdx,qword ptr [rsp+50h]        ; rdx = input
+  000000014000100E: mov         r8d,20h                        ; r8 = 32   <-- == sizeof(buf) in BYTES
+  0000000140001014: lea         rcx,[rsp+20h]                  ; rcx = &buf  (16 wchar_t = 32 bytes)
+  0000000140001019: call        wcsncpy                        ; count is in wchar_t units
+  000000014000101E: add         rsp,48h
+  0000000140001022: ret
+
+; Fingerprint: a wide-copy (wcsncpy/wcscpy_s family) whose count is the CONSTANT 20h (=32) while the
+; destination is a wchar_t[16] (also 32 bytes). The constant equals the byte-size, which is the tell of
+; sizeof-vs-_countof confusion: 32 *elements* = 64 bytes into a 32-byte buffer. A correct call would use
+; r8 = 10h (=16 = _countof). At the binary level, you must know the element width to see the 2x overflow.

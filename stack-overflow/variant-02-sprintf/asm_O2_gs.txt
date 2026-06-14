@@ -1,0 +1,20 @@
+; cl /O2 /GS /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: sub         rsp,38h
+  0000000140001004: mov         rax,qword ptr [__security_cookie]
+  000000014000100B: xor         rax,rsp
+  000000014000100E: mov         qword ptr [rsp+28h],rax       ; canary above buf
+  0000000140001013: mov         r8,rcx                        ; r8 = input
+  0000000140001016: lea         rdx,["%s"]
+  000000014000101D: lea         rcx,[rsp+20h]                 ; rcx = &buf
+  0000000140001021: call        sprintf
+  0000000140001026: mov         rcx,qword ptr [rsp+28h]
+  000000014000102B: xor         rcx,rsp
+  000000014000102E: call        __security_check_cookie
+  0000000140001033: add         rsp,38h
+  0000000140001037: ret
+
+; Identical /GS wrapper to variant-01: load cookie ^ rsp, store above buf, verify by call on exit.
+; The mitigation reacts to the buffer, not to which primitive overflows it.

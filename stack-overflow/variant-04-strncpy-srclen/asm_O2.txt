@@ -1,0 +1,16 @@
+; cl /O2 /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: sub         rsp,38h
+  0000000140001004: mov         rsi,rcx                       ; save input
+  0000000140001007: call        strlen                        ; (rcx already = input)
+  000000014000100C: mov         r8,rax                        ; r8 = strlen(input)
+  000000014000100F: mov         rdx,rsi                       ; rdx = input
+  0000000140001012: lea         rcx,[rsp+20h]                 ; rcx = &buf
+  0000000140001016: call        strncpy
+  000000014000101B: add         rsp,38h
+  000000014000101F: ret
+
+; strlen may be inlined to a SIMD/scan loop at /O2, but the dataflow is the same: the count
+; into strncpy is the measured length of the source, with no reference to 10h.

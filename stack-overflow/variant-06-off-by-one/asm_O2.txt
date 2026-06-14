@@ -1,0 +1,16 @@
+; cl /O2 /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: sub         rsp,18h
+  0000000140001004: movups      xmm0,xmmword ptr [rcx]        ; load input[0..15]
+  0000000140001007: movups      xmmword ptr [rsp],xmm0        ; store buf[0..15]   (16 bytes)
+  000000014000100B: movzx       eax,byte ptr [rcx+10h]        ; input[16]
+  000000014000100F: mov         byte ptr [rsp+10h],al         ; buf[16] = ...      (the +1 byte, OOB)
+  0000000140001013: add         rsp,18h
+  0000000140001017: ret
+
+; The off-by-one SURVIVES optimization as an explicit "16 + 1": a 16-byte vector store followed by a
+; single trailing byte store = 17 bytes into a 16-byte buffer. This 16+1 shape is the recognizable
+; release-build signature of a one-past-the-end loop. The loop and its predicate are gone; the extra
+; byte store is the residue.

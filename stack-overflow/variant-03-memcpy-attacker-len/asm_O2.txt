@@ -1,0 +1,14 @@
+; cl /O2 /c src.c  →  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+
+vuln:
+  0000000140001000: sub         rsp,38h
+  0000000140001004: mov         r8d,edx                       ; r8d = len  (attacker size, kept in reg)
+  0000000140001007: mov         rdx,rcx                       ; rdx = input
+  000000014000100A: lea         rcx,[rsp+20h]                 ; rcx = &buf
+  000000014000100E: call        memcpy
+  0000000140001013: add         rsp,38h
+  0000000140001017: ret
+
+; The size still flows straight from the parameter (edx) into r8d with no comparison instruction
+; between entry and the call. No cmp/jae against 10h = no bound check.
