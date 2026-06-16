@@ -2,6 +2,11 @@
 
 One bug class, studied as a grid. Every variant is the **same property** — an unbounded (or wrongly-bounded) write into a fixed stack buffer that can reach the saved return address — wearing a different disguise, and each is built three ways.
 
+> ⚠️ **Intentionally vulnerable code — for research and study only.** The variants and the
+> capstone contain deliberately planted bugs. Don't run them on production systems or anything
+> you don't own, and don't reuse this code in real software. Provided as-is, no warranty; the
+> authors accept **no responsibility or liability for any misuse or damage.**
+
 ## The grid
 
 **Axis B (rows — source idiom):** how the bug is written. From the undisguised baseline to defects that look defensive.
@@ -35,4 +40,17 @@ MSVC enables `/GS` **by default**, so the "release, no cookie" column is built w
 
 ## Caveat: this teaches the *vocabulary*, not the *grammar*
 
-Each variant is a 3-line function, so it trains fast, reliable **local recognition** — the necessary first skill. It cannot teach **reachability and lifetime reasoning** (is the input actually attacker-controlled and unbounded by the time it arrives, across a whole program?), which is where real audits spend most of their effort. See the root [README](../README.md#what-this-museum-teaches--and-what-it-cant). The planned **capstone** for this module is a single, realistic application that scatters these six idioms across genuine functionality — the bridge from vocabulary to grammar.
+Each variant is a 3-line function, so it trains fast, reliable **local recognition** — the necessary first skill. It cannot teach **reachability and lifetime reasoning** (is the input actually attacker-controlled and unbounded by the time it arrives, across a whole program?), which is where real audits spend most of their effort. See the root [README](../README.md#what-this-museum-teaches--and-what-it-cant).
+
+## Capstone — apply it in a real app
+
+[`capstone/`](capstone/) holds this module's applied exam: **Cascade**, a small but realistic
+Windows config-manager suite — a shared parser DLL with CLI, network/named-pipe service, and
+registry-import frontends — that hides one instance of each of the six idioms above inside
+genuine functionality. The exercise isn't just to spot the idiom; it's to trace whether
+untrusted input actually reaches it, and **through which transport**: a local file, local IPC,
+or a remote network client. Each bug is tagged with an `exposure` (`local-file` / `local-ipc` /
+`remote-net`) so you can practice "what can a *remote* attacker reach?" as its own skill.
+
+Learner-facing materials carry **no answers** — the design notes and bug map live in a separate,
+withheld key (`capstone/_solution/`, gitignored) that is not part of the exercise.

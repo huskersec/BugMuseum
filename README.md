@@ -4,6 +4,12 @@ A curated collection of classic security bugs, each presented as an *exhibit* yo
 
 The idea: take a textbook vulnerability, compile it at different optimization levels — and in different disguises — then lay everything side by side (source, assembly, decompilation) so you learn to **recognize the same bug across every layer of the stack**, whether you're reading clean C or staring at stripped, optimized disassembly.
 
+> ⚠️ **Intentionally vulnerable code — for research and study only.** Every exhibit and
+> capstone here contains deliberately planted security bugs. Do not run it on production
+> systems or against anything you don't own, and do not reuse this code in real software.
+> It is provided as-is, with no warranty; the authors accept **no responsibility or liability
+> for any misuse or damage.**
+
 ## Platform & toolchain
 
 This museum is **Windows-only**. Every exhibit targets **x64 PE** built with **MSVC (`cl.exe`)**, disassembled with **`dumpbin`**, and decompiled with an **angr / pypcode** pipeline. Mitigation flags (`/GS`, `/guard:cf`) and the idioms they emit (`__security_cookie`, `__security_check_cookie`) are the real Windows shapes you'll meet in the wild — not their Linux/GCC equivalents.
@@ -38,7 +44,23 @@ Each *variant* (an Axis B point) carries the full Axis A set, so every exhibit i
 | --- | --- | --- |
 | [stack-overflow](stack-overflow/) | CWE-121 — Stack-based Buffer Overflow | A fixed `buf[16]` overrun, built out along Axis B: 6 idioms from plain `strcpy` to subtle "looks-safe" disguises |
 
-**Planned exhibits** (each with its own Axis A/B grid): heap overflow · integer-overflow → undersized allocation · signedness bug · use-after-free · double free · out-of-bounds read (info leak) · uninitialized memory use. These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
+**Planned exhibits** (each with its own Axis A/B grid and capstone codename): heap overflow (**Avalanche**) · integer overflow → undersized allocation (**Capsize**) · signedness bug (**Polarity**) · use-after-free (**Revenant**) · double free (**Encore**) · out-of-bounds read / info leak (**Trespass**) · uninitialized memory use (**Residue**). These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
+
+## Capstones — from vocabulary to grammar
+
+Each bug-class module ends with a **capstone**: a single, realistic Windows application — a
+shared `core.dll` plus CLI, service, and helper frontends — that scatters the module's idioms
+across genuine functionality. The variants teach local idiom recognition; the capstone teaches
+the part they structurally can't (see below): **reachability and taint distance**, including
+which bugs a *remote* attacker can reach versus only a *local* one.
+
+Every planted bug is tagged with an **exposure** — `local-file`, `local-ipc`, or `remote-net` —
+so the same reachability story can be practiced consistently across modules. The first capstone
+lives at [stack-overflow/capstone/](stack-overflow/capstone/) (learner-facing materials carry no
+answers; bug locations are kept in a separate, withheld key).
+
+**Naming:** each capstone gets a one-word codename that's an evocative synonym for its bug class.
+The stack-overflow capstone is **Cascade** — something that overflows and spills over.
 
 ## What this museum teaches — and what it can't
 
