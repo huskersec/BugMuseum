@@ -1,21 +1,5 @@
-; cl /O2 /GS /c src.c  →  dumpbin /disasm:nobytes src.obj
+﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
+_vuln:
+  00000000: ret         0
 
-vuln:
-  0000000140001000: sub         rsp,38h
-  0000000140001004: mov         rax,qword ptr [__security_cookie]
-  000000014000100B: xor         rax,rsp
-  000000014000100E: mov         qword ptr [rsp+28h],rax
-  0000000140001013: mov         r8d,edx                       ; r8d = len
-  0000000140001016: mov         rdx,rcx                       ; rdx = input
-  0000000140001019: lea         rcx,[rsp+20h]                 ; rcx = &buf
-  000000014000101D: call        memcpy
-  0000000140001022: mov         rcx,qword ptr [rsp+28h]
-  0000000140001027: xor         rcx,rsp
-  000000014000102A: call        __security_check_cookie
-  000000014000102F: add         rsp,38h
-  0000000140001033: ret
-
-; /GS still fires (variable-size copy into a stack buffer). The canary catches a *return-address*
-; smash on exit — but note it does nothing about adjacent locals clobbered before the check, nor
-; about an info leak if the copy reads OOB. The cookie is a backstop, not a bounds check.

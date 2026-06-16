@@ -1,15 +1,37 @@
-; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
-; Function: vuln  (C symbol, no name mangling)
+﻿; cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: sub         esp,10h
+  00000006: mov         eax,dword ptr [ebp+8]
+  00000009: push        eax
+  0000000A: lea         ecx,[ebp-10h]
+  0000000D: push        ecx
+  0000000E: call        _strcpy
+  00000013: add         esp,8
+  00000016: mov         esp,ebp
+  00000018: pop         ebp
+  00000019: ret
+  0000001A: int         3
+  0000001B: int         3
+  0000001C: int         3
+  0000001D: int         3
+  0000001E: int         3
+  0000001F: int         3
+_main:
+  00000020: push        ebp
+  00000021: mov         ebp,esp
+  00000023: cmp         dword ptr [ebp+8],1
+  00000027: jle         00000040
+  00000029: mov         eax,4
+  0000002E: shl         eax,0
+  00000031: mov         ecx,dword ptr [ebp+0Ch]
+  00000034: mov         edx,dword ptr [ecx+eax]
+  00000037: push        edx
+  00000038: call        _vuln
+  0000003D: add         esp,4
+  00000040: xor         eax,eax
+  00000042: pop         ebp
+  00000043: ret
 
-vuln:
-  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home param 0 (input) into shadow slot
-  0000000140001005: sub         rsp,38h                      ; frame: 20h shadow + 10h buf + 8 align
-  0000000140001009: mov         rdx,qword ptr [rsp+40h]       ; rdx = input  (re-read from home slot)
-  000000014000100E: lea         rcx,[rsp+20h]                 ; rcx = &buf   <-- address of stack local
-  0000000140001013: call        strcpy                        ; no length argument
-  0000000140001018: add         rsp,38h
-  000000014000101C: ret
-
-; Fingerprint (MSVC /Od): rsp-relative frame (NO push rbp, unlike GCC -O0);
-; lea of a stack local into arg0 (rcx) + a copy primitive with no size = unbounded write.
-; buf occupies [rsp+20h..rsp+2Fh]; return address sits at [rsp+38h] — 8 bytes of slack above buf.

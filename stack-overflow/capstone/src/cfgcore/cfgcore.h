@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "../common/cprof.h"   /* entry-type constants (CFG_STR, CFG_WSTR, ...) */
 
 #ifdef CFGCORE_EXPORTS
 #define CFGCORE_API __declspec(dllexport)

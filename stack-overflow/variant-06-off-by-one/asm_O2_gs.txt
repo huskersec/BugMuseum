@@ -1,21 +1,5 @@
-; cl /O2 /GS /c src.c  →  dumpbin /disasm:nobytes src.obj
+﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
+_vuln:
+  00000000: ret         0
 
-vuln:
-  0000000140001000: sub         rsp,28h
-  0000000140001004: mov         rax,qword ptr [__security_cookie]
-  000000014000100B: xor         rax,rsp
-  000000014000100E: mov         qword ptr [rsp+10h],rax       ; canary just above the 16-byte buf
-  0000000140001013: movups      xmm0,xmmword ptr [rcx]        ; input[0..15]
-  0000000140001016: movups      xmmword ptr [rsp],xmm0        ; buf[0..15]
-  000000014000101A: movzx       eax,byte ptr [rcx+10h]        ; input[16]
-  000000014000101E: mov         byte ptr [rsp+10h],al         ; buf[16] -> overwrites the LSB of the canary!
-  0000000140001022: mov         rcx,qword ptr [rsp+10h]
-  0000000140001027: xor         rcx,rsp
-  000000014000102A: call        __security_check_cookie       ; trips, because byte 0 of the cookie changed
-  000000014000102F: add         rsp,28h
-  0000000140001033: ret
-
-; Classic interaction: the single OOB byte lands on the lowest byte of the cookie, so /GS reliably
-; catches THIS off-by-one on return. (Historically, attackers targeted the one case the cookie can't
-; see — a null byte that fixes up alignment/length without altering the cookie's checked value.)

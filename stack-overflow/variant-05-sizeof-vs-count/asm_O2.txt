@@ -1,14 +1,12 @@
-; cl /O2 /c src.c  →  dumpbin /disasm:nobytes src.obj
+﻿; cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
+_vuln:
+  00000000: sub         esp,20h
+  00000003: lea         eax,[esp]
+  00000006: push        20h
+  00000008: push        dword ptr [esp+28h]
+  0000000C: push        eax
+  0000000D: call        _wcsncpy
+  00000012: add         esp,2Ch
+  00000015: ret
 
-vuln:
-  0000000140001000: sub         rsp,48h
-  0000000140001004: mov         r8d,20h                       ; r8 = 32  (bytes-as-count)
-  000000014000100A: mov         rdx,rcx                       ; rdx = input
-  000000014000100D: lea         rcx,[rsp+20h]                 ; rcx = &buf
-  0000000140001011: call        wcsncpy
-  0000000140001016: add         rsp,48h
-  000000014000101A: ret
-
-; Same constant 20h. The unit bug is invisible to dataflow analysis that doesn't model element width —
-; the "bound" looks like a clean compile-time constant. Recognizing it requires typing the destination.

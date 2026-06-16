@@ -1,18 +1,45 @@
-; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
+﻿; cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: sub         esp,10h
+  00000006: mov         eax,dword ptr [ebp+8]
+  00000009: push        eax
+  0000000A: call        _strlen
+  0000000F: add         esp,4
+  00000012: push        eax
+  00000013: mov         ecx,dword ptr [ebp+8]
+  00000016: push        ecx
+  00000017: lea         edx,[ebp-10h]
+  0000001A: push        edx
+  0000001B: call        _strncpy
+  00000020: add         esp,0Ch
+  00000023: mov         esp,ebp
+  00000025: pop         ebp
+  00000026: ret
+  00000027: int         3
+  00000028: int         3
+  00000029: int         3
+  0000002A: int         3
+  0000002B: int         3
+  0000002C: int         3
+  0000002D: int         3
+  0000002E: int         3
+  0000002F: int         3
+_main:
+  00000030: push        ebp
+  00000031: mov         ebp,esp
+  00000033: cmp         dword ptr [ebp+8],1
+  00000037: jle         00000050
+  00000039: mov         eax,4
+  0000003E: shl         eax,0
+  00000041: mov         ecx,dword ptr [ebp+0Ch]
+  00000044: mov         edx,dword ptr [ecx+eax]
+  00000047: push        edx
+  00000048: call        _vuln
+  0000004D: add         esp,4
+  00000050: xor         eax,eax
+  00000052: pop         ebp
+  00000053: ret
 
-vuln:
-  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
-  0000000140001005: sub         rsp,38h
-  0000000140001009: mov         rcx,qword ptr [rsp+40h]        ; rcx = input
-  000000014000100E: call        strlen                         ; measure the SOURCE
-  0000000140001013: mov         r8,rax                         ; r8 = strlen(input)  <-- size from src
-  0000000140001016: mov         rdx,qword ptr [rsp+40h]        ; rdx = input
-  000000014000101B: lea         rcx,[rsp+20h]                  ; rcx = &buf
-  0000000140001020: call        strncpy                        ; "bounded" by the wrong length
-  0000000140001025: add         rsp,38h
-  0000000140001029: ret
-
-; Fingerprint: a sized copy whose count operand is the return of strlen() on the SAME pointer
-; that is also the copy source. sizeof(dest)=16 never appears. The 'n' primitive is a decoy;
-; strncpy(d, s, strlen(s)) == strcpy(d, s) for overflow purposes.

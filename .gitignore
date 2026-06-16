@@ -1,0 +1,27 @@
+# Bug Museum — ignore build artifacts. Students build these themselves.
+# Tracked on purpose: source (*.c/*.h), notes (*.md), and the curated study
+# artifacts (asm_*.txt, dec_*.c). Everything compiled is ignored below.
+
+# Variant runnable executables (root build.ps1 -Exe) -> <variant>/bin/
+**/bin/
+
+# Capstone "Cascade" build output (stack-overflow/capstone/build.ps1) -> build/<config>/
+stack-overflow/capstone/build/
+
+# Withheld capstone answer key + trigger harnesses — must never ship.
+# (Also covered by stack-overflow/capstone/.gitignore; repeated here as a backstop.)
+stack-overflow/capstone/_solution/
+
+# Compiled outputs anywhere (belt-and-suspenders for in-place builds)
+*.obj
+*.exe
+*.dll
+*.lib
+*.exp
+*.ilk
+*.pdb
+
+# Editor / OS noise
+.vs/
+*.user
+Thumbs.db

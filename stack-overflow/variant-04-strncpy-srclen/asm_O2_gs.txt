@@ -1,22 +1,29 @@
-; cl /O2 /GS /c src.c  →  dumpbin /disasm:nobytes src.obj
+﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
+_vuln:
+  00000000: sub         esp,14h
+  00000003: mov         eax,dword ptr [___security_cookie]
+  00000008: xor         eax,esp
+  0000000A: mov         dword ptr [esp+10h],eax
+  0000000E: mov         edx,dword ptr [esp+18h]
+  00000012: mov         eax,edx
+  00000014: push        esi
+  00000015: lea         esi,[eax+1]
+  00000018: mov         cl,byte ptr [eax]
+  0000001A: inc         eax
+  0000001B: test        cl,cl
+  0000001D: jne         00000018
+  0000001F: sub         eax,esi
+  00000021: push        eax
+  00000022: push        edx
+  00000023: lea         eax,[esp+0Ch]
+  00000027: push        eax
+  00000028: call        _strncpy
+  0000002D: mov         ecx,dword ptr [esp+20h]
+  00000031: add         esp,0Ch
+  00000034: pop         esi
+  00000035: xor         ecx,esp
+  00000037: call        @__security_check_cookie@4
+  0000003C: add         esp,14h
+  0000003F: ret
 
-vuln:
-  0000000140001000: sub         rsp,38h
-  0000000140001004: mov         rax,qword ptr [__security_cookie]
-  000000014000100B: xor         rax,rsp
-  000000014000100E: mov         qword ptr [rsp+28h],rax
-  0000000140001013: mov         rsi,rcx                       ; save input
-  0000000140001016: call        strlen
-  000000014000101B: mov         r8,rax                        ; r8 = strlen(input)
-  000000014000101E: mov         rdx,rsi                       ; rdx = input
-  0000000140001021: lea         rcx,[rsp+20h]                 ; rcx = &buf
-  0000000140001025: call        strncpy
-  000000014000102A: mov         rcx,qword ptr [rsp+28h]
-  000000014000102F: xor         rcx,rsp
-  0000000140001032: call        __security_check_cookie
-  0000000140001037: add         rsp,38h
-  000000014000103B: ret
-
-; Same /GS wrapper. The "n" in strncpy did not stop the compiler from deciding this frame
-; needs a cookie — another hint that the bounded look is cosmetic.

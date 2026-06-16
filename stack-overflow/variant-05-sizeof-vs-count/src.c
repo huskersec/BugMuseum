@@ -16,7 +16,8 @@ void vuln(const wchar_t *input) {
     wcsncpy(buf, input, sizeof(buf));   // BUG: bytes (32) where a count (16) is required
 }
 
-int main(int argc, char **argv) {
-    (void)argc; (void)argv;
+/* wmain so argv arrives as wide strings — feeding a long argument exercises vuln. */
+int wmain(int argc, wchar_t **argv) {
+    if (argc > 1) vuln(argv[1]);
     return 0;
 }

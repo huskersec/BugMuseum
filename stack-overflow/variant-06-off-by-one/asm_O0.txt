@@ -1,24 +1,51 @@
-; cl /Od /c src.c  →  dumpbin /disasm:nobytes src.obj
-; Function: vuln   (buf based at [rsp+0], i at [rsp+10h], input homed at [rsp+20h])
+﻿; cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: sub         esp,14h
+  00000006: mov         dword ptr [ebp-4],0
+  0000000D: jmp         00000018
+  0000000F: mov         eax,dword ptr [ebp-4]
+  00000012: add         eax,1
+  00000015: mov         dword ptr [ebp-4],eax
+  00000018: cmp         dword ptr [ebp-4],10h
+  0000001C: jg          0000002F
+  0000001E: mov         ecx,dword ptr [ebp+8]
+  00000021: add         ecx,dword ptr [ebp-4]
+  00000024: mov         edx,dword ptr [ebp-4]
+  00000027: mov         al,byte ptr [ecx]
+  00000029: mov         byte ptr [ebp+edx-14h],al
+  0000002D: jmp         0000000F
+  0000002F: mov         esp,ebp
+  00000031: pop         ebp
+  00000032: ret
+  00000033: int         3
+  00000034: int         3
+  00000035: int         3
+  00000036: int         3
+  00000037: int         3
+  00000038: int         3
+  00000039: int         3
+  0000003A: int         3
+  0000003B: int         3
+  0000003C: int         3
+  0000003D: int         3
+  0000003E: int         3
+  0000003F: int         3
+_main:
+  00000040: push        ebp
+  00000041: mov         ebp,esp
+  00000043: cmp         dword ptr [ebp+8],1
+  00000047: jle         00000060
+  00000049: mov         eax,4
+  0000004E: shl         eax,0
+  00000051: mov         ecx,dword ptr [ebp+0Ch]
+  00000054: mov         edx,dword ptr [ecx+eax]
+  00000057: push        edx
+  00000058: call        _vuln
+  0000005D: add         esp,4
+  00000060: xor         eax,eax
+  00000062: pop         ebp
+  00000063: ret
 
-vuln:
-  0000000140001000: mov         qword ptr [rsp+8],rcx        ; home input
-  0000000140001005: sub         rsp,18h
-  0000000140001009: mov         dword ptr [rsp+10h],0         ; i = 0
-  0000000140001011: jmp         000000014000102B             ; -> test
-; body:
-  0000000140001013: mov         eax,dword ptr [rsp+10h]       ; eax = i
-  0000000140001017: mov         rcx,qword ptr [rsp+20h]       ; rcx = input
-  000000014000101C: movzx       edx,byte ptr [rcx+rax]        ; dl  = input[i]
-  0000000140001020: mov         eax,dword ptr [rsp+10h]       ; eax = i
-  0000000140001024: mov         byte ptr [rsp+rax],dl         ; buf[i] = dl
-  0000000140001027: inc         dword ptr [rsp+10h]           ; i++
-; test:
-  000000014000102B: cmp         dword ptr [rsp+10h],10h       ; compare i with 16
-  0000000140001030: jbe         0000000140001013             ; <-- BUG: jbe (<=); correct code uses jb (<)
-  0000000140001032: add         rsp,18h
-  0000000140001036: ret
-
-; Fingerprint: a byte-copy loop guarded by `cmp i,10h` followed by JBE/JLE rather than JB/JL.
-; The whole bug is one mnemonic — the boundary predicate. i runs 0..16 inclusive = 17 stores into
-; a 16-byte buffer. (Exactly which neighbor buf[16] clobbers depends on the frame layout.)

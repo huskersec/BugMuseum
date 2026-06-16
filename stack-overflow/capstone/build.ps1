@@ -51,8 +51,13 @@ $configs = @(
 )
 
 function Run-Cl([string[]]$arglist) {
-    & cl.exe @arglist | Out-Null
-    if ($LASTEXITCODE -ne 0) { throw "cl failed:`n  cl $($arglist -join ' ')" }
+    $output = & cl.exe @arglist 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "---- cl output -------------------------------------------" -ForegroundColor DarkYellow
+        $output | ForEach-Object { Write-Host $_ }
+        Write-Host "----------------------------------------------------------" -ForegroundColor DarkYellow
+        throw "cl failed (exit $LASTEXITCODE):`n  cl $($arglist -join ' ')"
+    }
 }
 
 $bins = @('cfgcore.dll','provider_file.dll','provider_env.dll','provider_reg.dll',

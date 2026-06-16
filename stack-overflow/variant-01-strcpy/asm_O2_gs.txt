@@ -1,22 +1,5 @@
-; cl /O2 /GS /c src.c  →  dumpbin /disasm:nobytes src.obj
-; Function: vuln  (the MSVC-default hardened shape)
+﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: ret         0
 
-vuln:
-  0000000140001000: sub         rsp,38h
-  0000000140001004: mov         rax,qword ptr [__security_cookie]   ; load global cookie
-  000000014000100B: xor         rax,rsp                              ; cookie ^= rsp   <-- MSVC twist
-  000000014000100E: mov         qword ptr [rsp+28h],rax              ; store canary above buf
-  0000000140001013: mov         rdx,rcx                              ; rdx = input
-  0000000140001016: lea         rcx,[rsp+20h]                        ; rcx = &buf
-  000000014000101A: call        strcpy                               ; the overflow
-  000000014000101F: mov         rcx,qword ptr [rsp+28h]              ; reload canary
-  0000000140001024: xor         rcx,rsp                              ; un-xor by rsp
-  0000000140001027: call        __security_check_cookie              ; compare vs cookie, fail if changed
-  000000014000102C: add         rsp,38h
-  0000000140001030: ret
-
-; Fingerprint (MSVC /GS): load [__security_cookie] -> xor rsp -> store above the buffer;
-; after the buffer op, reload -> xor rsp -> CALL __security_check_cookie.
-; Differs from GCC: MSVC XORs the cookie with rsp and CALLS a check routine, rather than the
-; inline "sub guard; jne __stack_chk_fail" compare you see in mingw-reference/asm_O2_gs.txt.
-; The mere presence of the cookie is intel: the compiler decided this frame holds an overflow-able buffer.
