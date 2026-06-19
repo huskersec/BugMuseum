@@ -1,0 +1,67 @@
+﻿; [x86] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: sub         esp,8
+  00000006: push        10h
+  00000008: call        _malloc
+  0000000D: add         esp,4
+  00000010: mov         dword ptr [ebp-4],eax
+  00000013: push        offset $SG11455
+  00000018: mov         eax,dword ptr [ebp-4]
+  0000001B: push        eax
+  0000001C: call        _strcpy
+  00000021: add         esp,8
+  00000024: mov         ecx,dword ptr [ebp+8]
+  00000027: push        ecx
+  00000028: call        _strlen
+  0000002D: add         esp,4
+  00000030: add         eax,11h
+  00000033: push        eax
+  00000034: mov         edx,dword ptr [ebp-4]
+  00000037: push        edx
+  00000038: call        _realloc
+  0000003D: add         esp,8
+  00000040: mov         dword ptr [ebp-8],eax
+  00000043: cmp         dword ptr [ebp-8],0
+  00000047: jne         00000057
+  00000049: mov         eax,dword ptr [ebp-4]
+  0000004C: push        eax
+  0000004D: call        _free
+  00000052: add         esp,4
+  00000055: jmp         00000078
+  00000057: mov         ecx,dword ptr [ebp+8]
+  0000005A: push        ecx
+  0000005B: mov         edx,dword ptr [ebp-4]
+  0000005E: push        edx
+  0000005F: call        _strcat
+  00000064: add         esp,8
+  00000067: mov         eax,dword ptr [ebp-8]
+  0000006A: push        eax
+  0000006B: push        offset $SG11457
+  00000070: call        _printf
+  00000075: add         esp,8
+  00000078: mov         esp,ebp
+  0000007A: pop         ebp
+  0000007B: ret
+  0000007C: int         3
+  0000007D: int         3
+  0000007E: int         3
+  0000007F: int         3
+_main:
+  00000080: push        ebp
+  00000081: mov         ebp,esp
+  00000083: cmp         dword ptr [ebp+8],1
+  00000087: jle         000000A0
+  00000089: mov         eax,4
+  0000008E: shl         eax,0
+  00000091: mov         ecx,dword ptr [ebp+0Ch]
+  00000094: mov         edx,dword ptr [ecx+eax]
+  00000097: push        edx
+  00000098: call        _vuln
+  0000009D: add         esp,4
+  000000A0: xor         eax,eax
+  000000A2: pop         ebp
+  000000A3: ret
+

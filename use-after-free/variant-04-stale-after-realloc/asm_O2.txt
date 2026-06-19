@@ -1,0 +1,41 @@
+﻿; [x64] cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rbx
+  0000000000000005: push        rdi
+  0000000000000006: sub         rsp,20h
+  000000000000000A: mov         rdi,rcx
+  000000000000000D: mov         ecx,10h
+  0000000000000012: call        malloc
+  0000000000000017: mov         rcx,rdi
+  000000000000001A: mov         rbx,rax
+  000000000000001D: mov         dword ptr [rax],3D6469h
+  0000000000000023: call        strlen
+  0000000000000028: mov         rcx,rbx
+  000000000000002B: lea         rdx,[rax+11h]
+  000000000000002F: call        realloc
+  0000000000000034: mov         rdx,rax
+  0000000000000037: test        rax,rax
+  000000000000003A: jne         000000000000004E
+  000000000000003C: mov         rcx,rbx
+  000000000000003F: mov         rbx,qword ptr [rsp+30h]
+  0000000000000044: add         rsp,20h
+  0000000000000048: pop         rdi
+  0000000000000049: jmp         free
+  000000000000004E: dec         rbx
+  0000000000000051: cmp         byte ptr [rbx+1],0
+  0000000000000055: lea         rbx,[rbx+1]
+  0000000000000059: jne         0000000000000051
+  000000000000005B: xor         ecx,ecx
+  000000000000005D: nop         dword ptr [rax]
+  0000000000000060: movzx       eax,byte ptr [rdi+rcx]
+  0000000000000064: mov         byte ptr [rbx+rcx],al
+  0000000000000067: lea         rcx,[rcx+1]
+  000000000000006B: test        al,al
+  000000000000006D: jne         0000000000000060
+  000000000000006F: lea         rcx,[??_C@_03OFAPEBGM@?$CFs?6@]
+  0000000000000076: mov         rbx,qword ptr [rsp+30h]
+  000000000000007B: add         rsp,20h
+  000000000000007F: pop         rdi
+  0000000000000080: jmp         printf
+

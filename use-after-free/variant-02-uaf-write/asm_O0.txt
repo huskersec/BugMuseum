@@ -1,0 +1,54 @@
+﻿; [x64] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rcx
+  0000000000000005: sub         rsp,38h
+  0000000000000009: mov         ecx,20h
+  000000000000000E: call        malloc
+  0000000000000013: mov         qword ptr [rsp+20h],rax
+  0000000000000018: mov         rcx,qword ptr [rsp+20h]
+  000000000000001D: call        free
+  0000000000000022: mov         r8d,1Fh
+  0000000000000028: mov         rdx,qword ptr [rsp+40h]
+  000000000000002D: mov         rcx,qword ptr [rsp+20h]
+  0000000000000032: call        strncpy
+  0000000000000037: mov         eax,1
+  000000000000003C: imul        rax,rax,1Fh
+  0000000000000040: mov         rcx,qword ptr [rsp+20h]
+  0000000000000045: mov         byte ptr [rcx+rax],0
+  0000000000000049: add         rsp,38h
+  000000000000004D: ret
+  000000000000004E: int         3
+  000000000000004F: int         3
+  0000000000000050: int         3
+  0000000000000051: int         3
+  0000000000000052: int         3
+  0000000000000053: int         3
+  0000000000000054: int         3
+  0000000000000055: int         3
+  0000000000000056: int         3
+  0000000000000057: int         3
+  0000000000000058: int         3
+  0000000000000059: int         3
+  000000000000005A: int         3
+  000000000000005B: int         3
+  000000000000005C: int         3
+  000000000000005D: int         3
+  000000000000005E: int         3
+  000000000000005F: int         3
+main:
+  0000000000000060: mov         qword ptr [rsp+10h],rdx
+  0000000000000065: mov         dword ptr [rsp+8],ecx
+  0000000000000069: sub         rsp,28h
+  000000000000006D: cmp         dword ptr [rsp+30h],1
+  0000000000000072: jle         000000000000008C
+  0000000000000074: mov         eax,8
+  0000000000000079: imul        rax,rax,1
+  000000000000007D: mov         rcx,qword ptr [rsp+38h]
+  0000000000000082: mov         rcx,qword ptr [rcx+rax]
+  0000000000000086: call        vuln
+  000000000000008B: nop
+  000000000000008C: xor         eax,eax
+  000000000000008E: add         rsp,28h
+  0000000000000092: ret
+

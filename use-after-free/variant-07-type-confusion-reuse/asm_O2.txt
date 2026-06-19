@@ -1,0 +1,49 @@
+﻿; [x64] cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rbx
+  0000000000000005: mov         qword ptr [rsp+10h],rbp
+  000000000000000A: mov         qword ptr [rsp+18h],rsi
+  000000000000000F: mov         qword ptr [rsp+20h],rdi
+  0000000000000014: push        r14
+  0000000000000016: sub         rsp,20h
+  000000000000001A: mov         rsi,rcx
+  000000000000001D: mov         ecx,20h
+  0000000000000022: call        malloc
+  0000000000000027: lea         r14,[greet]
+  000000000000002E: mov         r8d,17h
+  0000000000000034: lea         rdx,[??_C@_05HLOCGDML@guest@]
+  000000000000003B: mov         rdi,rax
+  000000000000003E: lea         rcx,[rax+8]
+  0000000000000042: mov         qword ptr [rax],r14
+  0000000000000045: call        strncpy
+  000000000000004A: mov         rcx,rdi
+  000000000000004D: mov         byte ptr [rdi+1Fh],0
+  0000000000000051: call        free
+  0000000000000056: mov         ecx,20h
+  000000000000005B: call        malloc
+  0000000000000060: mov         edx,20h
+  0000000000000065: mov         rcx,rsi
+  0000000000000068: mov         rbx,rax
+  000000000000006B: call        strnlen
+  0000000000000070: mov         r8,rax
+  0000000000000073: mov         rdx,rsi
+  0000000000000076: mov         rcx,rbx
+  0000000000000079: call        memcpy
+  000000000000007E: mov         rax,qword ptr [rdi]
+  0000000000000081: cmp         rax,r14
+  0000000000000084: jne         0000000000000098
+  0000000000000086: lea         rdx,[rdi+8]
+  000000000000008A: lea         rcx,[??_C@_06PEEDCBK@hi?5?$CFs?6@]
+  0000000000000091: call        printf
+  0000000000000096: jmp         000000000000009E
+  0000000000000098: lea         rcx,[rdi+8]
+  000000000000009C: call        rax
+  000000000000009E: mov         rbx,qword ptr [rsp+30h]
+  00000000000000A3: mov         rbp,qword ptr [rsp+38h]
+  00000000000000A8: mov         rsi,qword ptr [rsp+40h]
+  00000000000000AD: mov         rdi,qword ptr [rsp+48h]
+  00000000000000B2: add         rsp,20h
+  00000000000000B6: pop         r14
+  00000000000000B8: ret
+

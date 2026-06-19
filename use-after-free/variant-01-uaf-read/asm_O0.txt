@@ -1,0 +1,59 @@
+﻿; [x64] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rcx
+  0000000000000005: sub         rsp,38h
+  0000000000000009: mov         ecx,20h
+  000000000000000E: call        malloc
+  0000000000000013: mov         qword ptr [rsp+20h],rax
+  0000000000000018: mov         r8d,1Fh
+  000000000000001E: mov         rdx,qword ptr [rsp+40h]
+  0000000000000023: mov         rcx,qword ptr [rsp+20h]
+  0000000000000028: call        strncpy
+  000000000000002D: mov         eax,1
+  0000000000000032: imul        rax,rax,1Fh
+  0000000000000036: mov         rcx,qword ptr [rsp+20h]
+  000000000000003B: mov         byte ptr [rcx+rax],0
+  000000000000003F: mov         rcx,qword ptr [rsp+20h]
+  0000000000000044: call        free
+  0000000000000049: mov         eax,1
+  000000000000004E: imul        rax,rax,0
+  0000000000000052: mov         rcx,qword ptr [rsp+20h]
+  0000000000000057: movzx       eax,byte ptr [rcx+rax]
+  000000000000005B: add         rsp,38h
+  000000000000005F: ret
+  0000000000000060: int         3
+  0000000000000061: int         3
+  0000000000000062: int         3
+  0000000000000063: int         3
+  0000000000000064: int         3
+  0000000000000065: int         3
+  0000000000000066: int         3
+  0000000000000067: int         3
+  0000000000000068: int         3
+  0000000000000069: int         3
+  000000000000006A: int         3
+  000000000000006B: int         3
+  000000000000006C: int         3
+  000000000000006D: int         3
+  000000000000006E: int         3
+  000000000000006F: int         3
+main:
+  0000000000000070: mov         qword ptr [rsp+10h],rdx
+  0000000000000075: mov         dword ptr [rsp+8],ecx
+  0000000000000079: sub         rsp,28h
+  000000000000007D: cmp         dword ptr [rsp+30h],1
+  0000000000000082: jle         00000000000000AA
+  0000000000000084: mov         eax,8
+  0000000000000089: imul        rax,rax,1
+  000000000000008D: mov         rcx,qword ptr [rsp+38h]
+  0000000000000092: mov         rcx,qword ptr [rcx+rax]
+  0000000000000096: call        vuln
+  000000000000009B: mov         edx,eax
+  000000000000009D: lea         rcx,[$SG11358]
+  00000000000000A4: call        printf
+  00000000000000A9: nop
+  00000000000000AA: xor         eax,eax
+  00000000000000AC: add         rsp,28h
+  00000000000000B0: ret
+

@@ -1,0 +1,67 @@
+﻿; [x86] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: push        ecx
+  00000004: push        20h
+  00000006: call        _malloc
+  0000000B: add         esp,4
+  0000000E: mov         dword ptr [ebp-4],eax
+  00000011: push        1Fh
+  00000013: mov         eax,dword ptr [ebp+8]
+  00000016: push        eax
+  00000017: mov         ecx,dword ptr [ebp-4]
+  0000001A: push        ecx
+  0000001B: call        _strncpy
+  00000020: add         esp,0Ch
+  00000023: mov         edx,1
+  00000028: imul        eax,edx,1Fh
+  0000002B: mov         ecx,dword ptr [ebp-4]
+  0000002E: mov         byte ptr [ecx+eax],0
+  00000032: mov         edx,dword ptr [ebp-4]
+  00000035: push        edx
+  00000036: call        _free
+  0000003B: add         esp,4
+  0000003E: mov         eax,1
+  00000043: imul        ecx,eax,0
+  00000046: mov         edx,dword ptr [ebp-4]
+  00000049: movzx       eax,byte ptr [edx+ecx]
+  0000004D: mov         esp,ebp
+  0000004F: pop         ebp
+  00000050: ret
+  00000051: int         3
+  00000052: int         3
+  00000053: int         3
+  00000054: int         3
+  00000055: int         3
+  00000056: int         3
+  00000057: int         3
+  00000058: int         3
+  00000059: int         3
+  0000005A: int         3
+  0000005B: int         3
+  0000005C: int         3
+  0000005D: int         3
+  0000005E: int         3
+  0000005F: int         3
+_main:
+  00000060: push        ebp
+  00000061: mov         ebp,esp
+  00000063: cmp         dword ptr [ebp+8],1
+  00000067: jle         0000008E
+  00000069: mov         eax,4
+  0000006E: shl         eax,0
+  00000071: mov         ecx,dword ptr [ebp+0Ch]
+  00000074: mov         edx,dword ptr [ecx+eax]
+  00000077: push        edx
+  00000078: call        _vuln
+  0000007D: add         esp,4
+  00000080: push        eax
+  00000081: push        offset $SG11460
+  00000086: call        _printf
+  0000008B: add         esp,8
+  0000008E: xor         eax,eax
+  00000090: pop         ebp
+  00000091: ret
+

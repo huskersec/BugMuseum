@@ -44,8 +44,9 @@ Each *variant* (an Axis B point) carries the full Axis A set, so every exhibit i
 | --- | --- | --- |
 | [stack-overflow](stack-overflow/) | CWE-121 — Stack-based Buffer Overflow | A fixed `buf[16]` overrun, built out along Axis B: 6 idioms from plain `strcpy` to subtle "looks-safe" disguises. Capstone: **Cascade** |
 | [heap-overflow](heap-overflow/) | CWE-122 — Heap-based Buffer Overflow | The same six idioms relocated to the heap (codename **Avalanche**) — teaches what's different: `/GS` doesn't apply (and isn't emitted), crashes are deferred, and you smash allocator metadata, not the return address |
+| [use-after-free](use-after-free/) | CWE-416 — Use After Free | The museum's first **temporal** class (codename **Revenant**) — 7 variants from plain free-then-use to dangling aliases, stale-after-`realloc`, and a type-confusion reuse that turns a UAF into an indirect call. No compile-time mitigation; the defense is runtime (Page Heap). Capstone: **Revenant** (session/handle server) |
 
-**Planned exhibits** (each with its own Axis A/B grid and capstone codename): integer overflow → undersized allocation (**Capsize**) · signedness bug (**Polarity**) · use-after-free (**Revenant**) · double free (**Encore**) · out-of-bounds read / info leak (**Trespass**) · uninitialized memory use (**Residue**). These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
+**Planned exhibits** (each with its own Axis A/B grid and capstone codename): integer overflow → undersized allocation (**Capsize**) · signedness bug (**Polarity**) · double free (**Encore**) · out-of-bounds read / info leak (**Trespass**) · uninitialized memory use (**Residue**). These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
 
 ## Capstones — from vocabulary to grammar
 

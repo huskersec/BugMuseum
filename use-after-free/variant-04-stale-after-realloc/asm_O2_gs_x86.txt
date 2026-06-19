@@ -1,0 +1,62 @@
+﻿; [x86] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebx
+  00000001: push        edi
+  00000002: push        10h
+  00000004: call        _malloc
+  00000009: mov         ebx,dword ptr [esp+10h]
+  0000000D: mov         edi,eax
+  0000000F: mov         ecx,ebx
+  00000011: add         esp,4
+  00000014: mov         dword ptr [edi],3D6469h
+  0000001A: lea         edx,[ecx+1]
+  0000001D: nop         dword ptr [eax]
+  00000020: mov         al,byte ptr [ecx]
+  00000022: inc         ecx
+  00000023: test        al,al
+  00000025: jne         00000020
+  00000027: sub         ecx,edx
+  00000029: lea         eax,[ecx+11h]
+  0000002C: push        eax
+  0000002D: push        edi
+  0000002E: call        _realloc
+  00000033: mov         edx,eax
+  00000035: add         esp,8
+  00000038: test        edx,edx
+  0000003A: jne         00000048
+  0000003C: push        edi
+  0000003D: call        _free
+  00000042: add         esp,4
+  00000045: pop         edi
+  00000046: pop         ebx
+  00000047: ret
+  00000048: push        esi
+  00000049: mov         esi,ebx
+  0000004B: nop         dword ptr [eax+eax]
+  00000050: mov         al,byte ptr [ebx]
+  00000052: inc         ebx
+  00000053: test        al,al
+  00000055: jne         00000050
+  00000057: sub         ebx,esi
+  00000059: dec         edi
+  0000005A: nop         word ptr [eax+eax]
+  00000060: mov         al,byte ptr [edi+1]
+  00000063: inc         edi
+  00000064: test        al,al
+  00000066: jne         00000060
+  00000068: mov         ecx,ebx
+  0000006A: shr         ecx,2
+  0000006D: rep movs    dword ptr es:[edi],dword ptr [esi]
+  0000006F: mov         ecx,ebx
+  00000071: and         ecx,3
+  00000074: push        edx
+  00000075: rep movs    byte ptr es:[edi],byte ptr [esi]
+  00000077: push        offset ??_C@_03OFAPEBGM@?$CFs?6@
+  0000007C: call        _printf
+  00000081: add         esp,8
+  00000084: pop         esi
+  00000085: pop         edi
+  00000086: pop         ebx
+  00000087: ret
+
