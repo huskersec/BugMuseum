@@ -1,29 +1,21 @@
-﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+﻿; [x64] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
-_vuln:
-  00000000: sub         esp,14h
-  00000003: mov         eax,dword ptr [___security_cookie]
-  00000008: xor         eax,esp
-  0000000A: mov         dword ptr [esp+10h],eax
-  0000000E: mov         edx,dword ptr [esp+18h]
-  00000012: mov         eax,edx
-  00000014: push        esi
-  00000015: lea         esi,[eax+1]
-  00000018: mov         cl,byte ptr [eax]
-  0000001A: inc         eax
-  0000001B: test        cl,cl
-  0000001D: jne         00000018
-  0000001F: sub         eax,esi
-  00000021: push        eax
-  00000022: push        edx
-  00000023: lea         eax,[esp+0Ch]
-  00000027: push        eax
-  00000028: call        _strncpy
-  0000002D: mov         ecx,dword ptr [esp+20h]
-  00000031: add         esp,0Ch
-  00000034: pop         esi
-  00000035: xor         ecx,esp
-  00000037: call        @__security_check_cookie@4
-  0000003C: add         esp,14h
-  0000003F: ret
+vuln:
+  0000000000000000: push        rbx
+  0000000000000002: sub         rsp,40h
+  0000000000000006: mov         rax,qword ptr [__security_cookie]
+  000000000000000D: xor         rax,rsp
+  0000000000000010: mov         qword ptr [rsp+30h],rax
+  0000000000000015: mov         rbx,rcx
+  0000000000000018: call        strlen
+  000000000000001D: mov         r8,rax
+  0000000000000020: lea         rcx,[rsp+20h]
+  0000000000000025: mov         rdx,rbx
+  0000000000000028: call        strncpy
+  000000000000002D: mov         rcx,qword ptr [rsp+30h]
+  0000000000000032: xor         rcx,rsp
+  0000000000000035: call        __security_check_cookie
+  000000000000003A: add         rsp,40h
+  000000000000003E: pop         rbx
+  000000000000003F: ret
 

@@ -1,5 +1,16 @@
-﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+﻿; [x64] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
-_vuln:
-  00000000: ret         0
+vuln:
+  0000000000000000: sub         rsp,48h
+  0000000000000004: mov         rax,qword ptr [__security_cookie]
+  000000000000000B: xor         rax,rsp
+  000000000000000E: mov         qword ptr [rsp+30h],rax
+  0000000000000013: mov         rdx,rcx
+  0000000000000016: lea         rcx,[rsp+20h]
+  000000000000001B: call        strcpy
+  0000000000000020: mov         rcx,qword ptr [rsp+30h]
+  0000000000000025: xor         rcx,rsp
+  0000000000000028: call        __security_check_cookie
+  000000000000002D: add         rsp,48h
+  0000000000000031: ret
 

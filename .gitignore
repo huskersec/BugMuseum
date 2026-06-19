@@ -2,15 +2,15 @@
 # Tracked on purpose: source (*.c/*.h), notes (*.md), and the curated study
 # artifacts (asm_*.txt, dec_*.c). Everything compiled is ignored below.
 
-# Variant runnable executables (root build.ps1 -Exe) -> <variant>/bin/
+# Variant runnable executables (root build.ps1 -Exe) -> <variant>/bin/<arch>/<config>/
 **/bin/
 
-# Capstone "Cascade" build output (stack-overflow/capstone/build.ps1) -> build/<config>/
-stack-overflow/capstone/build/
+# Capstone build output (each capstone build.ps1) -> capstone/build/<arch>/<config>/
+**/build/
 
-# Withheld capstone answer key + trigger harnesses — must never ship.
-# (Also covered by stack-overflow/capstone/.gitignore; repeated here as a backstop.)
-stack-overflow/capstone/_solution/
+# Withheld capstone answer keys + trigger harnesses — must never ship.
+# (Each capstone also has its own .gitignore for this; repeated here as a backstop.)
+**/_solution/
 
 # Compiled outputs anywhere (belt-and-suspenders for in-place builds)
 *.obj

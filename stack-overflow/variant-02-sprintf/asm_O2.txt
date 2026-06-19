@@ -1,12 +1,11 @@
-﻿; cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+﻿; [x64] cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
-_vuln:
-  00000000: sub         esp,10h
-  00000003: lea         eax,[esp]
-  00000006: push        dword ptr [esp+14h]
-  0000000A: push        offset ??_C@_02DKCKIIND@?$CFs@
-  0000000F: push        eax
-  00000010: call        _sprintf
-  00000015: add         esp,1Ch
-  00000018: ret
+vuln:
+  0000000000000000: sub         rsp,38h
+  0000000000000004: mov         r8,rcx
+  0000000000000007: lea         rdx,[??_C@_02DKCKIIND@?$CFs@]
+  000000000000000E: lea         rcx,[rsp+20h]
+  0000000000000013: call        sprintf
+  0000000000000018: add         rsp,38h
+  000000000000001C: ret
 

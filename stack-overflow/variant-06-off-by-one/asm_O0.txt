@@ -1,51 +1,56 @@
-﻿; cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+﻿; [x64] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
-_vuln:
-  00000000: push        ebp
-  00000001: mov         ebp,esp
-  00000003: sub         esp,14h
-  00000006: mov         dword ptr [ebp-4],0
-  0000000D: jmp         00000018
-  0000000F: mov         eax,dword ptr [ebp-4]
-  00000012: add         eax,1
-  00000015: mov         dword ptr [ebp-4],eax
-  00000018: cmp         dword ptr [ebp-4],10h
-  0000001C: jg          0000002F
-  0000001E: mov         ecx,dword ptr [ebp+8]
-  00000021: add         ecx,dword ptr [ebp-4]
-  00000024: mov         edx,dword ptr [ebp-4]
-  00000027: mov         al,byte ptr [ecx]
-  00000029: mov         byte ptr [ebp+edx-14h],al
-  0000002D: jmp         0000000F
-  0000002F: mov         esp,ebp
-  00000031: pop         ebp
-  00000032: ret
-  00000033: int         3
-  00000034: int         3
-  00000035: int         3
-  00000036: int         3
-  00000037: int         3
-  00000038: int         3
-  00000039: int         3
-  0000003A: int         3
-  0000003B: int         3
-  0000003C: int         3
-  0000003D: int         3
-  0000003E: int         3
-  0000003F: int         3
-_main:
-  00000040: push        ebp
-  00000041: mov         ebp,esp
-  00000043: cmp         dword ptr [ebp+8],1
-  00000047: jle         00000060
-  00000049: mov         eax,4
-  0000004E: shl         eax,0
-  00000051: mov         ecx,dword ptr [ebp+0Ch]
-  00000054: mov         edx,dword ptr [ecx+eax]
-  00000057: push        edx
-  00000058: call        _vuln
-  0000005D: add         esp,4
-  00000060: xor         eax,eax
-  00000062: pop         ebp
-  00000063: ret
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rcx
+  0000000000000005: sub         rsp,28h
+  0000000000000009: mov         dword ptr [rsp],0
+  0000000000000010: jmp         000000000000001A
+  0000000000000012: mov         eax,dword ptr [rsp]
+  0000000000000015: inc         eax
+  0000000000000017: mov         dword ptr [rsp],eax
+  000000000000001A: cmp         dword ptr [rsp],10h
+  000000000000001E: jg          0000000000000037
+  0000000000000020: movsxd      rax,dword ptr [rsp]
+  0000000000000024: movsxd      rcx,dword ptr [rsp]
+  0000000000000028: mov         rdx,qword ptr [rsp+30h]
+  000000000000002D: movzx       eax,byte ptr [rdx+rax]
+  0000000000000031: mov         byte ptr [rsp+rcx+8],al
+  0000000000000035: jmp         0000000000000012
+  0000000000000037: add         rsp,28h
+  000000000000003B: ret
+  000000000000003C: int         3
+  000000000000003D: int         3
+  000000000000003E: int         3
+  000000000000003F: int         3
+  0000000000000040: int         3
+  0000000000000041: int         3
+  0000000000000042: int         3
+  0000000000000043: int         3
+  0000000000000044: int         3
+  0000000000000045: int         3
+  0000000000000046: int         3
+  0000000000000047: int         3
+  0000000000000048: int         3
+  0000000000000049: int         3
+  000000000000004A: int         3
+  000000000000004B: int         3
+  000000000000004C: int         3
+  000000000000004D: int         3
+  000000000000004E: int         3
+  000000000000004F: int         3
+main:
+  0000000000000050: mov         qword ptr [rsp+10h],rdx
+  0000000000000055: mov         dword ptr [rsp+8],ecx
+  0000000000000059: sub         rsp,28h
+  000000000000005D: cmp         dword ptr [rsp+30h],1
+  0000000000000062: jle         000000000000007C
+  0000000000000064: mov         eax,8
+  0000000000000069: imul        rax,rax,1
+  000000000000006D: mov         rcx,qword ptr [rsp+38h]
+  0000000000000072: mov         rcx,qword ptr [rcx+rax]
+  0000000000000076: call        vuln
+  000000000000007B: nop
+  000000000000007C: xor         eax,eax
+  000000000000007E: add         rsp,28h
+  0000000000000082: ret
 

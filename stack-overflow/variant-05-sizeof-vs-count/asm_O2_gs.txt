@@ -1,20 +1,17 @@
-﻿; cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+﻿; [x64] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
-_vuln:
-  00000000: sub         esp,24h
-  00000003: mov         eax,dword ptr [___security_cookie]
-  00000008: xor         eax,esp
-  0000000A: mov         dword ptr [esp+20h],eax
-  0000000E: mov         eax,dword ptr [esp+28h]
-  00000012: push        20h
-  00000014: push        eax
-  00000015: lea         eax,[esp+8]
-  00000019: push        eax
-  0000001A: call        _wcsncpy
-  0000001F: mov         ecx,dword ptr [esp+2Ch]
-  00000023: add         esp,0Ch
-  00000026: xor         ecx,esp
-  00000028: call        @__security_check_cookie@4
-  0000002D: add         esp,24h
-  00000030: ret
+vuln:
+  0000000000000000: sub         rsp,58h
+  0000000000000004: mov         rax,qword ptr [__security_cookie]
+  000000000000000B: xor         rax,rsp
+  000000000000000E: mov         qword ptr [rsp+40h],rax
+  0000000000000013: mov         rdx,rcx
+  0000000000000016: mov         r8d,20h
+  000000000000001C: lea         rcx,[rsp+20h]
+  0000000000000021: call        wcsncpy
+  0000000000000026: mov         rcx,qword ptr [rsp+40h]
+  000000000000002B: xor         rcx,rsp
+  000000000000002E: call        __security_check_cookie
+  0000000000000033: add         rsp,58h
+  0000000000000037: ret
 

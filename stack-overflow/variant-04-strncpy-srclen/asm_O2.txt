@@ -1,24 +1,15 @@
-﻿; cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+﻿; [x64] cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
 ; Function: vuln
-_vuln:
-  00000000: mov         edx,dword ptr [esp+4]
-  00000004: sub         esp,10h
-  00000007: mov         eax,edx
-  00000009: push        esi
-  0000000A: lea         esi,[eax+1]
-  0000000D: nop         dword ptr [eax]
-  00000010: mov         cl,byte ptr [eax]
-  00000012: inc         eax
-  00000013: test        cl,cl
-  00000015: jne         00000010
-  00000017: sub         eax,esi
-  00000019: push        eax
-  0000001A: push        edx
-  0000001B: lea         eax,[esp+0Ch]
-  0000001F: push        eax
-  00000020: call        _strncpy
-  00000025: add         esp,0Ch
-  00000028: pop         esi
-  00000029: add         esp,10h
-  0000002C: ret
+vuln:
+  0000000000000000: push        rbx
+  0000000000000002: sub         rsp,30h
+  0000000000000006: mov         rbx,rcx
+  0000000000000009: call        strlen
+  000000000000000E: mov         r8,rax
+  0000000000000011: lea         rcx,[rsp+20h]
+  0000000000000016: mov         rdx,rbx
+  0000000000000019: call        strncpy
+  000000000000001E: add         rsp,30h
+  0000000000000022: pop         rbx
+  0000000000000023: ret
 

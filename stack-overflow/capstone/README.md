@@ -36,14 +36,15 @@ deciding **which of these can reach it**:
 
 ## Build
 
-From an *x64 Native Tools Command Prompt for VS*:
+From **any PowerShell** (the script locates the VS toolchain itself):
 
 ```
-powershell -ExecutionPolicy Bypass -File .\build.ps1          # build all four configs
-powershell -ExecutionPolicy Bypass -File .\build.ps1 -Disasm  # also emit dumpbin disassembly
+powershell -ExecutionPolicy Bypass -File .\build.ps1                  # x64 (default)
+powershell -ExecutionPolicy Bypass -File .\build.ps1 -Arch x86        # 32-bit
+powershell -ExecutionPolicy Bypass -File .\build.ps1 -Arch both -Disasm
 ```
 
-Four configurations are produced under `build\<config>\`:
+Four configurations are produced per architecture under `build\<arch>\<config>\`:
 
 | Config | Flags | What it shows |
 | --- | --- | --- |
@@ -52,7 +53,7 @@ Four configurations are produced under `build\<config>\`:
 | `o2gs` | `/O2 /GS` | optimized, stack cookie |
 | `o2gscf` | `/O2 /GS /guard:cf` | cookie + Control Flow Guard |
 
-Run a frontend from its config folder (the DLLs sit beside the EXEs), e.g. `cd build\o2gs` then
+Run a frontend from its config folder (the DLLs sit beside the EXEs), e.g. `cd build\x64\o2gs` then
 `.\cfgapply <file.cprof>`, or start `.\cfgsvcd` and talk to it over the pipe/TCP.
 
 ## Your task

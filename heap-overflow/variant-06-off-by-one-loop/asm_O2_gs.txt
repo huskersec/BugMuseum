@@ -1,0 +1,39 @@
+﻿; [x64] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: push        rbx
+  0000000000000002: sub         rsp,20h
+  0000000000000006: mov         rbx,rcx
+  0000000000000009: mov         ecx,10h
+  000000000000000E: call        malloc
+  0000000000000013: mov         r8,rax
+  0000000000000016: lea         rcx,[rax+10h]
+  000000000000001A: lea         rax,[rbx+10h]
+  000000000000001E: cmp         r8,rax
+  0000000000000021: ja          000000000000005D
+  0000000000000023: xor         r9d,r9d
+  0000000000000026: cmp         rcx,rbx
+  0000000000000029: jb          000000000000005D
+  000000000000002B: sub         rbx,r8
+  000000000000002E: lea         rax,[r9+r8]
+  0000000000000032: mov         edx,11h
+  0000000000000037: sub         rdx,r9
+  000000000000003A: nop         word ptr [rax+rax]
+  0000000000000040: movzx       ecx,byte ptr [rbx+rax]
+  0000000000000044: mov         byte ptr [rax],cl
+  0000000000000046: lea         rax,[rax+1]
+  000000000000004A: sub         rdx,1
+  000000000000004E: jne         0000000000000040
+  0000000000000050: mov         rcx,r8
+  0000000000000053: add         rsp,20h
+  0000000000000057: pop         rbx
+  0000000000000058: jmp         free
+  000000000000005D: movups      xmm0,xmmword ptr [rbx]
+  0000000000000060: movzx       eax,byte ptr [rbx+10h]
+  0000000000000064: movups      xmmword ptr [r8],xmm0
+  0000000000000068: mov         byte ptr [r8+10h],al
+  000000000000006C: mov         rcx,r8
+  000000000000006F: add         rsp,20h
+  0000000000000073: pop         rbx
+  0000000000000074: jmp         free
+

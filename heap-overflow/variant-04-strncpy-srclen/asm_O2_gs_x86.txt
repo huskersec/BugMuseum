@@ -1,0 +1,28 @@
+﻿; [x86] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        esi
+  00000001: push        edi
+  00000002: push        10h
+  00000004: call        _malloc
+  00000009: mov         edx,dword ptr [esp+10h]
+  0000000D: add         esp,4
+  00000010: mov         ecx,edx
+  00000012: mov         esi,eax
+  00000014: lea         edi,[ecx+1]
+  00000017: mov         al,byte ptr [ecx]
+  00000019: inc         ecx
+  0000001A: test        al,al
+  0000001C: jne         00000017
+  0000001E: sub         ecx,edi
+  00000020: push        ecx
+  00000021: push        edx
+  00000022: push        esi
+  00000023: call        _strncpy
+  00000028: push        esi
+  00000029: call        _free
+  0000002E: add         esp,10h
+  00000031: pop         edi
+  00000032: pop         esi
+  00000033: ret
+

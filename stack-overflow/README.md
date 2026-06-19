@@ -29,14 +29,14 @@ Read top-to-bottom and the lesson lands: **the bug is not a function name.** It'
 | --- | --- |
 | `src.c` | annotated source |
 | `notes.md` | root cause + per-build recognition signatures |
-| `asm_O0.txt` / `asm_O2.txt` / `asm_O2_gs.txt` | MSVC `dumpbin /disasm:nobytes` of `vuln`, three builds |
+| `asm_O0.txt` / `asm_O2.txt` / `asm_O2_gs.txt` | MSVC `dumpbin /disasm:nobytes` of `vuln`, three builds (x64; `*_x86.txt` sit alongside for the 32-bit ABI) |
 | `dec_O0.c` / `dec_O2.c` / `dec_O2_gs.c` | angr/pypcode pseudo-C for each build |
 
 > `variant-01-strcpy/mingw-reference/` preserves the original mingw-GCC artifacts beside the MSVC ones, so you can train on the MSVC-vs-GCC idiom contrast (`__security_cookie` + `xor rsp` + `call __security_check_cookie` vs `__stack_chk_guard` + inline `sub; jne __stack_chk_fail`). See that variant's `notes.md` for the table.
 
 ## A note on the builds
 
-MSVC enables `/GS` **by default**, so the "release, no cookie" column is built with `/GS-` to expose the raw idiom; the hardened column uses `/GS`. The artifacts here are idiomatically faithful but hand-authored — run [`../build.ps1`](../build.ps1) from an *x64 Native Tools Command Prompt* to regenerate byte-exact asm (and, optionally, decompilation) from a real `cl.exe`.
+MSVC enables `/GS` **by default**, so the "release, no cookie" column is built with `/GS-` to expose the raw idiom; the hardened column uses `/GS`. The artifacts here are idiomatically faithful but hand-authored — run [`../build.ps1`](../build.ps1) from any PowerShell (it locates the toolchain itself) to regenerate byte-exact **x64** asm from a real `cl.exe`. Add `-Exe` for runnable binaries, and `-Arch x86` / `-Arch both` to also build 32-bit.
 
 ## Caveat: this teaches the *vocabulary*, not the *grammar*
 

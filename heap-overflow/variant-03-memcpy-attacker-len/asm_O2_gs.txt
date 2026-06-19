@@ -1,0 +1,23 @@
+﻿; [x64] cl /O2 /GS /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rbx
+  0000000000000005: mov         qword ptr [rsp+10h],rsi
+  000000000000000A: push        rdi
+  000000000000000B: sub         rsp,20h
+  000000000000000F: mov         rsi,rcx
+  0000000000000012: mov         edi,edx
+  0000000000000014: mov         ecx,10h
+  0000000000000019: call        malloc
+  000000000000001E: mov         r8d,edi
+  0000000000000021: mov         rdx,rsi
+  0000000000000024: mov         rcx,rax
+  0000000000000027: mov         rbx,rax
+  000000000000002A: call        memcpy
+  000000000000002F: mov         rcx,rbx
+  0000000000000032: mov         rbx,qword ptr [rsp+30h]
+  0000000000000037: mov         rsi,qword ptr [rsp+38h]
+  000000000000003C: add         rsp,20h
+  0000000000000040: pop         rdi
+  0000000000000041: jmp         free
+

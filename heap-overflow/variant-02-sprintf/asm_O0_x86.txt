@@ -1,0 +1,50 @@
+﻿; [x86] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: push        ecx
+  00000004: push        10h
+  00000006: call        _malloc
+  0000000B: add         esp,4
+  0000000E: mov         dword ptr [ebp-4],eax
+  00000011: mov         eax,dword ptr [ebp+8]
+  00000014: push        eax
+  00000015: push        offset $SG10932
+  0000001A: mov         ecx,dword ptr [ebp-4]
+  0000001D: push        ecx
+  0000001E: call        _sprintf
+  00000023: add         esp,0Ch
+  00000026: mov         edx,dword ptr [ebp-4]
+  00000029: push        edx
+  0000002A: call        _free
+  0000002F: add         esp,4
+  00000032: mov         esp,ebp
+  00000034: pop         ebp
+  00000035: ret
+  00000036: int         3
+  00000037: int         3
+  00000038: int         3
+  00000039: int         3
+  0000003A: int         3
+  0000003B: int         3
+  0000003C: int         3
+  0000003D: int         3
+  0000003E: int         3
+  0000003F: int         3
+_main:
+  00000040: push        ebp
+  00000041: mov         ebp,esp
+  00000043: cmp         dword ptr [ebp+8],1
+  00000047: jle         00000060
+  00000049: mov         eax,4
+  0000004E: shl         eax,0
+  00000051: mov         ecx,dword ptr [ebp+0Ch]
+  00000054: mov         edx,dword ptr [ecx+eax]
+  00000057: push        edx
+  00000058: call        _vuln
+  0000005D: add         esp,4
+  00000060: xor         eax,eax
+  00000062: pop         ebp
+  00000063: ret
+

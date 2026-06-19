@@ -42,9 +42,10 @@ Each *variant* (an Axis B point) carries the full Axis A set, so every exhibit i
 
 | Exhibit | Bug class | Description |
 | --- | --- | --- |
-| [stack-overflow](stack-overflow/) | CWE-121 — Stack-based Buffer Overflow | A fixed `buf[16]` overrun, built out along Axis B: 6 idioms from plain `strcpy` to subtle "looks-safe" disguises |
+| [stack-overflow](stack-overflow/) | CWE-121 — Stack-based Buffer Overflow | A fixed `buf[16]` overrun, built out along Axis B: 6 idioms from plain `strcpy` to subtle "looks-safe" disguises. Capstone: **Cascade** |
+| [heap-overflow](heap-overflow/) | CWE-122 — Heap-based Buffer Overflow | The same six idioms relocated to the heap (codename **Avalanche**) — teaches what's different: `/GS` doesn't apply (and isn't emitted), crashes are deferred, and you smash allocator metadata, not the return address |
 
-**Planned exhibits** (each with its own Axis A/B grid and capstone codename): heap overflow (**Avalanche**) · integer overflow → undersized allocation (**Capsize**) · signedness bug (**Polarity**) · use-after-free (**Revenant**) · double free (**Encore**) · out-of-bounds read / info leak (**Trespass**) · uninitialized memory use (**Residue**). These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
+**Planned exhibits** (each with its own Axis A/B grid and capstone codename): integer overflow → undersized allocation (**Capsize**) · signedness bug (**Polarity**) · use-after-free (**Revenant**) · double free (**Encore**) · out-of-bounds read / info leak (**Trespass**) · uninitialized memory use (**Residue**). These are the corruption-class bugs with sharp, teachable binary signatures. (Data-flow-to-sink bugs — command injection, SQLi, path traversal — compile to unremarkable asm and belong in a separate wing, if at all.)
 
 ## Capstones — from vocabulary to grammar
 

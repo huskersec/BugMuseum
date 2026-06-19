@@ -1,0 +1,12 @@
+﻿; [x86] cl /O2 /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: sub         esp,10h
+  00000003: lea         eax,[esp]
+  00000006: push        dword ptr [esp+14h]
+  0000000A: push        offset ??_C@_02DKCKIIND@?$CFs@
+  0000000F: push        eax
+  00000010: call        _sprintf
+  00000015: add         esp,1Ch
+  00000018: ret
+

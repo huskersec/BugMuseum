@@ -1,0 +1,47 @@
+﻿; [x64] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+vuln:
+  0000000000000000: mov         qword ptr [rsp+8],rcx
+  0000000000000005: sub         rsp,38h
+  0000000000000009: mov         ecx,10h
+  000000000000000E: call        malloc
+  0000000000000013: mov         qword ptr [rsp+20h],rax
+  0000000000000018: mov         rcx,qword ptr [rsp+40h]
+  000000000000001D: call        strlen
+  0000000000000022: mov         r8,rax
+  0000000000000025: mov         rdx,qword ptr [rsp+40h]
+  000000000000002A: mov         rcx,qword ptr [rsp+20h]
+  000000000000002F: call        strncpy
+  0000000000000034: mov         rcx,qword ptr [rsp+20h]
+  0000000000000039: call        free
+  000000000000003E: nop
+  000000000000003F: add         rsp,38h
+  0000000000000043: ret
+  0000000000000044: int         3
+  0000000000000045: int         3
+  0000000000000046: int         3
+  0000000000000047: int         3
+  0000000000000048: int         3
+  0000000000000049: int         3
+  000000000000004A: int         3
+  000000000000004B: int         3
+  000000000000004C: int         3
+  000000000000004D: int         3
+  000000000000004E: int         3
+  000000000000004F: int         3
+main:
+  0000000000000050: mov         qword ptr [rsp+10h],rdx
+  0000000000000055: mov         dword ptr [rsp+8],ecx
+  0000000000000059: sub         rsp,28h
+  000000000000005D: cmp         dword ptr [rsp+30h],1
+  0000000000000062: jle         000000000000007C
+  0000000000000064: mov         eax,8
+  0000000000000069: imul        rax,rax,1
+  000000000000006D: mov         rcx,qword ptr [rsp+38h]
+  0000000000000072: mov         rcx,qword ptr [rcx+rax]
+  0000000000000076: call        vuln
+  000000000000007B: nop
+  000000000000007C: xor         eax,eax
+  000000000000007E: add         rsp,28h
+  0000000000000082: ret
+
