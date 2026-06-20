@@ -1,0 +1,61 @@
+﻿; [x86] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000010: push        ebp
+  00000011: mov         ebp,esp
+  00000013: sub         esp,0Ch
+  00000016: push        1Ch
+  00000018: call        _malloc
+  0000001D: add         esp,4
+  00000020: mov         dword ptr [ebp-4],eax
+  00000023: mov         eax,dword ptr [ebp-4]
+  00000026: push        eax
+  00000027: call        _free
+  0000002C: add         esp,4
+  0000002F: mov         ecx,dword ptr [ebp-4]
+  00000032: push        ecx
+  00000033: call        _free
+  00000038: add         esp,4
+  0000003B: push        1Ch
+  0000003D: call        _malloc
+  00000042: add         esp,4
+  00000045: mov         dword ptr [ebp-8],eax
+  00000048: push        1Ch
+  0000004A: call        _malloc
+  0000004F: add         esp,4
+  00000052: mov         dword ptr [ebp-0Ch],eax
+  00000055: mov         edx,dword ptr [ebp-8]
+  00000058: mov         dword ptr [edx],offset _legit
+  0000005E: push        1Ch
+  00000060: mov         eax,dword ptr [ebp+8]
+  00000063: push        eax
+  00000064: mov         ecx,dword ptr [ebp-0Ch]
+  00000067: push        ecx
+  00000068: call        _memcpy
+  0000006D: add         esp,0Ch
+  00000070: mov         edx,dword ptr [ebp-8]
+  00000073: mov         eax,dword ptr [edx]
+  00000075: call        eax
+  00000077: xor         eax,eax
+  00000079: mov         esp,ebp
+  0000007B: pop         ebp
+  0000007C: ret
+  0000007D: int         3
+  0000007E: int         3
+  0000007F: int         3
+_main:
+  00000080: push        ebp
+  00000081: mov         ebp,esp
+  00000083: cmp         dword ptr [ebp+8],1
+  00000087: jle         000000A0
+  00000089: mov         eax,4
+  0000008E: shl         eax,0
+  00000091: mov         ecx,dword ptr [ebp+0Ch]
+  00000094: mov         edx,dword ptr [ecx+eax]
+  00000097: push        edx
+  00000098: call        _vuln
+  0000009D: add         esp,4
+  000000A0: xor         eax,eax
+  000000A2: pop         ebp
+  000000A3: ret
+

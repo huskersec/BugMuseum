@@ -1,0 +1,77 @@
+﻿; [x86] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000000: push        ebp
+  00000001: mov         ebp,esp
+  00000003: sub         esp,8
+  00000006: push        20h
+  00000008: call        _malloc
+  0000000D: add         esp,4
+  00000010: mov         dword ptr [ebp-4],eax
+  00000013: push        1Fh
+  00000015: mov         eax,dword ptr [ebp+8]
+  00000018: push        eax
+  00000019: mov         ecx,dword ptr [ebp-4]
+  0000001C: push        ecx
+  0000001D: call        _strncpy
+  00000022: add         esp,0Ch
+  00000025: mov         edx,1
+  0000002A: imul        eax,edx,1Fh
+  0000002D: mov         ecx,dword ptr [ebp-4]
+  00000030: mov         byte ptr [ecx+eax],0
+  00000034: mov         edx,1
+  00000039: imul        eax,edx,0
+  0000003C: mov         ecx,dword ptr [ebp-4]
+  0000003F: movzx       edx,byte ptr [ecx+eax]
+  00000043: mov         dword ptr [ebp-8],edx
+  00000046: cmp         dword ptr [ebp-4],0
+  0000004A: je          00000058
+  0000004C: mov         eax,dword ptr [ebp-4]
+  0000004F: push        eax
+  00000050: call        _free
+  00000055: add         esp,4
+  00000058: cmp         dword ptr [ebp-4],0
+  0000005C: je          0000006A
+  0000005E: mov         ecx,dword ptr [ebp-4]
+  00000061: push        ecx
+  00000062: call        _free
+  00000067: add         esp,4
+  0000006A: mov         eax,dword ptr [ebp-8]
+  0000006D: mov         esp,ebp
+  0000006F: pop         ebp
+  00000070: ret
+  00000071: int         3
+  00000072: int         3
+  00000073: int         3
+  00000074: int         3
+  00000075: int         3
+  00000076: int         3
+  00000077: int         3
+  00000078: int         3
+  00000079: int         3
+  0000007A: int         3
+  0000007B: int         3
+  0000007C: int         3
+  0000007D: int         3
+  0000007E: int         3
+  0000007F: int         3
+_main:
+  00000080: push        ebp
+  00000081: mov         ebp,esp
+  00000083: cmp         dword ptr [ebp+8],1
+  00000087: jle         000000AE
+  00000089: mov         eax,4
+  0000008E: shl         eax,0
+  00000091: mov         ecx,dword ptr [ebp+0Ch]
+  00000094: mov         edx,dword ptr [ecx+eax]
+  00000097: push        edx
+  00000098: call        _vuln
+  0000009D: add         esp,4
+  000000A0: push        eax
+  000000A1: push        offset $SG11463
+  000000A6: call        _printf
+  000000AB: add         esp,8
+  000000AE: xor         eax,eax
+  000000B0: pop         ebp
+  000000B1: ret
+

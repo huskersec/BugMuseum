@@ -1,0 +1,71 @@
+﻿; [x86] cl /Od /GS- /c src.c  ->  dumpbin /disasm:nobytes src.obj
+; Function: vuln
+_vuln:
+  00000020: push        ebp
+  00000021: mov         ebp,esp
+  00000023: sub         esp,14h
+  00000026: mov         dword ptr [ebp-8],20h
+  0000002D: mov         eax,dword ptr [ebp-8]
+  00000030: push        eax
+  00000031: call        _malloc
+  00000036: add         esp,4
+  00000039: mov         dword ptr [ebp-0Ch],eax
+  0000003C: mov         ecx,dword ptr [ebp-8]
+  0000003F: sub         ecx,1
+  00000042: push        ecx
+  00000043: mov         edx,dword ptr [ebp+8]
+  00000046: push        edx
+  00000047: mov         eax,dword ptr [ebp-0Ch]
+  0000004A: push        eax
+  0000004B: call        _strncpy
+  00000050: add         esp,0Ch
+  00000053: mov         ecx,dword ptr [ebp-0Ch]
+  00000056: add         ecx,dword ptr [ebp-8]
+  00000059: mov         byte ptr [ecx-1],0
+  0000005D: mov         edx,dword ptr [ebp-8]
+  00000060: mov         dword ptr [ebp-10h],edx
+  00000063: mov         eax,dword ptr [ebp-0Ch]
+  00000066: mov         dword ptr [ebp-14h],eax
+  00000069: mov         ecx,1
+  0000006E: imul        edx,ecx,0
+  00000071: mov         eax,dword ptr [ebp-0Ch]
+  00000074: movzx       ecx,byte ptr [eax+edx]
+  00000078: mov         dword ptr [ebp-4],ecx
+  0000007B: lea         edx,[ebp-0Ch]
+  0000007E: push        edx
+  0000007F: call        _blob_destroy
+  00000084: add         esp,4
+  00000087: lea         eax,[ebp-14h]
+  0000008A: push        eax
+  0000008B: call        _blob_destroy
+  00000090: add         esp,4
+  00000093: mov         eax,dword ptr [ebp-4]
+  00000096: mov         esp,ebp
+  00000098: pop         ebp
+  00000099: ret
+  0000009A: int         3
+  0000009B: int         3
+  0000009C: int         3
+  0000009D: int         3
+  0000009E: int         3
+  0000009F: int         3
+_main:
+  000000A0: push        ebp
+  000000A1: mov         ebp,esp
+  000000A3: cmp         dword ptr [ebp+8],1
+  000000A7: jle         000000CE
+  000000A9: mov         eax,4
+  000000AE: shl         eax,0
+  000000B1: mov         ecx,dword ptr [ebp+0Ch]
+  000000B4: mov         edx,dword ptr [ecx+eax]
+  000000B7: push        edx
+  000000B8: call        _vuln
+  000000BD: add         esp,4
+  000000C0: push        eax
+  000000C1: push        offset $SG11470
+  000000C6: call        _printf
+  000000CB: add         esp,8
+  000000CE: xor         eax,eax
+  000000D0: pop         ebp
+  000000D1: ret
+
